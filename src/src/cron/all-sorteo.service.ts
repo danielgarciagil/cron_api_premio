@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 //Propio
 import { GraphQLClient } from 'graphql-request';
 import { SorteoApi, allSorteoApiResponse } from '../types/sorteo';
+import { pausaBySeg } from './funciones';
 
 @Injectable()
 export class AllSorteoService {
   private graphQLClient: GraphQLClient;
+  private readonly logger = new Logger('All-Sorteo-service');
 
   getUrl(): string {
     return this.configService.get<string>('URL_API');
@@ -18,8 +20,20 @@ export class AllSorteoService {
     this.graphQLClient = new GraphQLClient(url_api);
   }
 
-  //TODO controlar errores
   async getAllSorteoByDia(id_dia: number): Promise<SorteoApi[]> {
+    const intentos = 10;
+    for (let i = 0; i < intentos; i++) {
+      try {
+        return await this.consultaGetAllSorteoDia(id_dia);
+      } catch (error) {
+        this.logger.error(`ERROR getAllSorteoByDia => ${error}`);
+        await pausaBySeg(10);
+      }
+    }
+    return [];
+  }
+
+  async consultaGetAllSorteoDia(id_dia: number): Promise<SorteoApi[]> {
     const sorteosApi: SorteoApi[] = [];
     const query = `query AllSorteo( $idDia: Int, ) {
       allSorteo(id_dia: $idDia, ) {
@@ -35,7 +49,9 @@ export class AllSorteoService {
     const variables = {
       idDia: id_dia,
     };
-
+    this.logger.verbose(
+      `HACIENDO PETICION A LA API GetAllSorteoDia => ${id_dia}`,
+    );
     const data: allSorteoApiResponse = await this.graphQLClient.request(
       query,
       variables,
@@ -56,24 +72,34 @@ export class AllSorteoService {
     return sorteosApi;
   }
 
-  async createResultadoBySorteo(id_sorteo: number) {
-    try {
-      const query = `mutation GenerarResultadoAutomatico($buscarBySorteoaBuscarInput: BuscarBySorteoaBuscarInput!) {
+  async createResultadoBySorteo(id_dia: number): Promise<boolean> {
+    const intentos = 10;
+    for (let i = 0; i < intentos; i++) {
+      try {
+        return await this.generarResultadoBySorteo(id_dia);
+      } catch (error) {
+        this.logger.error(`ERROR generarResultadoBySorteo => ${error}`);
+        await pausaBySeg(10);
+      }
+    }
+    return false;
+  }
+
+  async generarResultadoBySorteo(id_sorteo: number): Promise<boolean> {
+    const query = `mutation GenerarResultadoAutomatico($buscarBySorteoaBuscarInput: BuscarBySorteoaBuscarInput!) {
         generarResultadoAutomatico(buscarBySorteoaBuscarInput: $buscarBySorteoaBuscarInput) {
           message
         }
       }`;
-      const variables = {
-        buscarBySorteoaBuscarInput: {
-          id_sorteo_a_buscar: id_sorteo,
-        },
-      };
-      const data = await this.graphQLClient.request(query, variables);
-      console.log(data);
-      return data; // todo tipar respuesta
-    } catch (error) {
-      console.log(`PASO UN ERROR => ${error}`);
-      return error;
-    }
+    const variables = {
+      buscarBySorteoaBuscarInput: {
+        id_sorteo_a_buscar: id_sorteo,
+      },
+    };
+    this.logger.verbose(
+      `HACIENDO PETICION A LA API generarResultadoBySorteo => ID => ${id_sorteo}`,
+    );
+    await this.graphQLClient.request(query, variables);
+    return true;
   }
 }
