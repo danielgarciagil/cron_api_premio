@@ -43,11 +43,11 @@ export class CronInitService implements OnModuleInit {
     this.logger.debug('INICIO EL MODULO DE CRON');
 
     //? Este Cron es para consultar los sorteos
-    cron.schedule('04 21 * * *', async () => {
+    cron.schedule('* 0 * * *', async () => {
       await this.getAllSorteoById();
     });
 
-    cron.schedule('* * * * * *', async () => {
+    cron.schedule('* * * * *', async () => {
       const horaActual = moment().format('HH:mm:ss');
       this.logger.warn(`HORA ACTUAL: ${horaActual}`);
     });
