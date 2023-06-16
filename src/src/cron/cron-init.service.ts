@@ -37,17 +37,26 @@ export class CronInitService implements OnModuleInit {
     );
     console.log('Termino la consulta');
     //this.tareas = [
-    //  { hora: '22:11:00', id_sorteo: 1, name_sorteo: 'LA PRIMERA MD 1' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 2' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 3' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 4' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 5' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 6' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 7' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 8' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 9' },
-    //  { hora: '22:11:00', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 10' },
-    //  { hora: '22:39:10', id_sorteo: 2, name_sorteo: 'LA PRIMERA PM 11' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA MD 1' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 2' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 3' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 4' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 5' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 6' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 7' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 8' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 9' },
+    //  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 10' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 11' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 12' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 13' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 14' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 15' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 16' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 17' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 18' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 19' },
+    //  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 20' },
     //];
 
     this.tareas.forEach((sorteoApi) => {
@@ -68,11 +77,11 @@ export class CronInitService implements OnModuleInit {
   async onModuleInit() {
     this.logger.debug('INICIO EL MODULO DE CRON');
 
-    cron.schedule('29 23 * * *', async () => {
+    cron.schedule('29 16 * * *', async () => {
       await this.getAllSorteoById();
     });
 
-    cron.schedule(' * * * * * *', async () => {
+    cron.schedule('* * * * * *', async () => {
       const horaActual = moment().format('HH:mm:ss');
       console.log(horaActual);
     });
