@@ -5,7 +5,7 @@ import * as moment from 'moment';
 
 import { AllSorteoService } from './all-sorteo.service';
 import { SorteoApi } from '../types/sorteo';
-import { convertirHoraExpresionCron, id_fecha_hoy } from './funciones';
+import { ejecutarBorradoCache, convertirHoraExpresionCron, id_fecha_hoy } from './funciones';
 
 @Injectable()
 export class CronInitService implements OnModuleInit {
@@ -19,6 +19,8 @@ export class CronInitService implements OnModuleInit {
   async getAllSorteoById() {
     this.logger.debug('Buscando sorteos nuevos');
     this.tareas = [];
+    const cache = await ejecutarBorradoCache();
+    this.logger.warn(cache);
     this.tareas = await this.allSorteoService.getAllSorteoByDia(id_fecha_hoy());
     this.logger.debug('Termino de buscar los nuevos sorteos');
 
@@ -41,6 +43,7 @@ export class CronInitService implements OnModuleInit {
 
   async onModuleInit() {
     this.logger.debug('INICIO EL MODULO DE CRON');
+    await this.getAllSorteoById();
 
     //? Este Cron es para consultar los sorteos
     cron.schedule('* 0 * * *', async () => {
