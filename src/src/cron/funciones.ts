@@ -15,7 +15,7 @@ async function borrarCache(): Promise<void> {
   });
 }
 
-export async function ejecutarBorradoCache():Promise<string> {
+export async function ejecutarBorradoCache(): Promise<string> {
   try {
     await borrarCache();
     return 'Caché borrada exitosamente';

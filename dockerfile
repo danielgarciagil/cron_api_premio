@@ -1,8 +1,10 @@
 #Imagen de Node
-FROM node:20
+FROM node:20-alpine
 
-RUN apt update && apt install tzdata -y
+# Instala tzdata utilizando apk (el gestor de paquetes de Alpine)
+RUN apk update && apk add tzdata
 ENV TZ="America/New_York"
+
 
 #Crear la carperta
 WORKDIR /app
