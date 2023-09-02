@@ -5,7 +5,11 @@ import * as moment from 'moment';
 
 import { AllSorteoService } from './all-sorteo.service';
 import { SorteoApi } from '../types/sorteo';
-import { ejecutarBorradoCache, convertirHoraExpresionCron, id_fecha_hoy } from './funciones';
+import {
+  ejecutarBorradoCache,
+  convertirHoraExpresionCron,
+  id_fecha_hoy,
+} from './funciones';
 
 @Injectable()
 export class CronInitService implements OnModuleInit {
