@@ -47,10 +47,10 @@ export class CronInitService implements OnModuleInit {
 
   async onModuleInit() {
     this.logger.debug('INICIO EL MODULO DE CRON');
-    await this.getAllSorteoById();
+    //await this.getAllSorteoById();
 
     //? Este Cron es para consultar los sorteos
-    cron.schedule('* 0 * * *', async () => {
+    cron.schedule('10 0 * * *', async () => {
       await this.getAllSorteoById();
     });
 
