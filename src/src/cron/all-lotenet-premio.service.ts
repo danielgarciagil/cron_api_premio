@@ -69,7 +69,7 @@ export class AllLotenetPremioService {
 
         const newLotenetApi: LotenetApi = {
           hora: lotenet_premio_dia.hora,
-          id_lotenet_premio: lotenetPremio.id,
+          id_lotenet_premio: parseInt(lotenetPremio.id.toString()),
           name_lotenet_premio: lotenetPremio.name,
           activo: lotenetPremio.activo,
         };
@@ -79,14 +79,14 @@ export class AllLotenetPremioService {
     return lotenetApi;
   }
 
-  async createLotenetPremioBySorteo(id_dia: number): Promise<void> {
+  async createLotenetPremioById(id_lotenetPremio: number): Promise<void> {
     const intentos = 10;
     for (let i = 0; i < intentos; i++) {
       try {
-        await this.generarPremioAutomaticoLotenet(id_dia);
+        await this.generarPremioAutomaticoLotenet(id_lotenetPremio);
         break;
       } catch (error) {
-        this.logger.error(`ERROR generarResultadoBySorteo => ${error}`);
+        this.logger.error(`ERROR generarLotenetPremio => ${error}`);
         await pausaBySeg(10);
       }
     }
@@ -95,6 +95,7 @@ export class AllLotenetPremioService {
   async generarPremioAutomaticoLotenet(
     id_lotenet_premio: number,
   ): Promise<void> {
+    console.log(id_lotenet_premio);
     const query = `mutation GenerarPremioAutomaticoLotenet($buscarByLotenetPremio: BuscarByLotenerPremioInput!) {
       generarPremioAutomaticoLotenet(buscarByLotenetPremio: $buscarByLotenetPremio) {
         message
@@ -105,6 +106,9 @@ export class AllLotenetPremioService {
         id_lotenet_premio: id_lotenet_premio,
       },
     };
+    console.log(query);
+    console.log(variables);
+
     this.logger.verbose(
       `HACIENDO PETICION A LA API GenerarPremioAutomaticoLotenet => ID => ${id_lotenet_premio}`,
     );

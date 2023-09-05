@@ -78,7 +78,7 @@ export class CronInitService implements OnModuleInit {
         this.logger.debug(
           `INIT_CRON-LOTENET => ${lotenetPremio.name_lotenet_premio} => ${lotenetPremio.id_lotenet_premio}`,
         );
-        await this.allLotenetPremioService.createLotenetPremioBySorteo(
+        await this.allLotenetPremioService.createLotenetPremioById(
           lotenetPremio.id_lotenet_premio,
         );
         newCron.stop();

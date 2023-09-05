@@ -21,6 +21,7 @@ FROM node:20-alpine
 
 #Url de la api
 ENV URL_API=""
+ENV TZ="America/New_York"
 
 COPY --from=build /app /app
 
