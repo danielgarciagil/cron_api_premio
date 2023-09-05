@@ -1,4 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
 import * as cron from 'node-cron';
 import * as moment from 'moment';
 //Propio
@@ -30,7 +32,18 @@ export class CronInitService implements OnModuleInit {
   constructor(
     private readonly allSorteoService: AllSorteoService,
     private readonly allLotenetPremioService: AllLotenetPremioService,
+    private configService: ConfigService,
   ) {}
+
+  getBuscarSorteo(): boolean {
+    const buscarSorteo = this.configService.get<string>('BUSCAR_SORTEO');
+    return buscarSorteo === 'true';
+  }
+
+  getBuscarLotenetPremio(): boolean {
+    const buscarLotenet = this.configService.get<string>('BUSCAR_PREMIO');
+    return buscarLotenet === 'true';
+  }
 
   async getAllSorteoById() {
     this.logger.debug('Buscando sorteos nuevos');
@@ -88,12 +101,29 @@ export class CronInitService implements OnModuleInit {
 
   async onModuleInit() {
     this.logger.debug('INICIO EL MODULO DE CRON');
-    await this.getAllSorteoById();
-    await this.getAllLotenetPremioById();
+    const buscarSorteo = this.getBuscarSorteo();
+    const buscarLotenet = this.getBuscarLotenetPremio();
 
-    //? Este Cron es para consultar los sorteos
-    cron.schedule('10 0 * * *', async () => {
+    if (buscarSorteo) {
       await this.getAllSorteoById();
+    }
+
+    if (buscarLotenet) {
+      await this.getAllLotenetPremioById();
+    }
+
+    //? Este Cron es para consultar los Sorteos
+    cron.schedule('10 0 * * *', async () => {
+      if (buscarSorteo) {
+        await this.getAllSorteoById();
+      }
+    });
+
+    //? Este Cron es para consultar los Lotenet
+    cron.schedule('10 0 * * *', async () => {
+      if (buscarLotenet) {
+        await this.getAllLotenetPremioById();
+      }
     });
 
     cron.schedule('* * * * *', async () => {
