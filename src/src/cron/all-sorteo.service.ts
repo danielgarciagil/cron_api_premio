@@ -43,6 +43,7 @@ export class AllSorteoService {
         }
         sorteo_a_buscar {
           id
+          activo
         }
       }
     }`;
@@ -58,14 +59,16 @@ export class AllSorteoService {
     );
     data.allSorteo.forEach((sorteo) => {
       if (sorteo.sorteo_a_buscar) {
-        //TODO PROBAR UN SORTEO QUE NO TENGA E BUSCAR
         sorteo.sorteo_dias.forEach((sorteos_dias) => {
           const newSorteoApi: SorteoApi = {
             hora: sorteos_dias.hora,
             id_sorteo: parseInt(sorteo.sorteo_a_buscar.id.toString()),
             name_sorteo: sorteo.name,
+            activo: sorteo.sorteo_a_buscar.activo,
           };
-          sorteosApi.push(newSorteoApi);
+          if (newSorteoApi.activo == true) {
+            sorteosApi.push(newSorteoApi);
+          }
         });
       }
     });

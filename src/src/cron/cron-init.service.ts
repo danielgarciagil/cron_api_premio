@@ -4,12 +4,13 @@ import * as moment from 'moment';
 //Propio
 
 import { AllSorteoService } from './all-sorteo.service';
-import { SorteoApi } from '../types/sorteo';
+import { LotenetApi, SorteoApi } from '../types/sorteo';
 import {
   ejecutarBorradoCache,
   convertirHoraExpresionCron,
   id_fecha_hoy,
 } from './funciones';
+import { AllLotenetPremioService } from './all-lotenet-premio.service';
 
 @Injectable()
 export class CronInitService implements OnModuleInit {
@@ -17,8 +18,19 @@ export class CronInitService implements OnModuleInit {
   private tareas: SorteoApi[] = [
     //{ hora: '21:04:15', id_sorteo: 46, name_sorteo: 'LA PRIMERA MD 1' },
   ];
+  private tareas_lotenet: LotenetApi[] = [
+    //{
+    //  hora: '21:30:00',
+    //  id_lotenet_premio: 9,
+    //  name_lotenet_premio: 'FLORIDA MD DESARROLLO',
+    //  activo: true,
+    //},
+  ];
 
-  constructor(private readonly allSorteoService: AllSorteoService) {}
+  constructor(
+    private readonly allSorteoService: AllSorteoService,
+    private readonly allLotenetPremioService: AllLotenetPremioService,
+  ) {}
 
   async getAllSorteoById() {
     this.logger.debug('Buscando sorteos nuevos');
@@ -31,11 +43,11 @@ export class CronInitService implements OnModuleInit {
     this.tareas.forEach((sorteoApi) => {
       const expresionCron = convertirHoraExpresionCron(sorteoApi.hora);
       this.logger.debug(
-        `CRON => ${sorteoApi.name_sorteo} HORA: ${sorteoApi.hora} ID: ${sorteoApi.id_sorteo}`,
+        `CRON-SORTEO => ${sorteoApi.name_sorteo} HORA: ${sorteoApi.hora} ID: ${sorteoApi.id_sorteo}`,
       );
       const newCron = cron.schedule(expresionCron, async () => {
         this.logger.debug(
-          `INIT_CRON => ${sorteoApi.name_sorteo} => ${sorteoApi.id_sorteo}`,
+          `INIT_CRON-SORTEO => ${sorteoApi.name_sorteo} => ${sorteoApi.id_sorteo}`,
         );
         await this.allSorteoService.createResultadoBySorteo(
           sorteoApi.id_sorteo,
@@ -45,9 +57,39 @@ export class CronInitService implements OnModuleInit {
     });
   }
 
+  async getAllLotenetPremioById() {
+    this.logger.debug('Buscando Lotenet Premio nuevos');
+    this.tareas_lotenet = [];
+    const cache = await ejecutarBorradoCache();
+    this.logger.warn(cache);
+
+    this.tareas_lotenet =
+      await this.allLotenetPremioService.getAllLotenetPremioByDia(
+        id_fecha_hoy(),
+      );
+    this.logger.debug('Termino de buscar los Lotenet Premio sorteos');
+
+    this.tareas_lotenet.forEach((lotenetPremio) => {
+      const expresionCron = convertirHoraExpresionCron(lotenetPremio.hora);
+      this.logger.debug(
+        `CRON-LOTENET => ${lotenetPremio.name_lotenet_premio} HORA: ${lotenetPremio.hora} ID: ${lotenetPremio.id_lotenet_premio}`,
+      );
+      const newCron = cron.schedule(expresionCron, async () => {
+        this.logger.debug(
+          `INIT_CRON-LOTENET => ${lotenetPremio.name_lotenet_premio} => ${lotenetPremio.id_lotenet_premio}`,
+        );
+        await this.allLotenetPremioService.createLotenetPremioBySorteo(
+          lotenetPremio.id_lotenet_premio,
+        );
+        newCron.stop();
+      });
+    });
+  }
+
   async onModuleInit() {
     this.logger.debug('INICIO EL MODULO DE CRON');
     await this.getAllSorteoById();
+    await this.getAllLotenetPremioById();
 
     //? Este Cron es para consultar los sorteos
     cron.schedule('10 0 * * *', async () => {
@@ -60,26 +102,3 @@ export class CronInitService implements OnModuleInit {
     });
   }
 }
-
-//this.tareas = [
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA MD 1' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 2' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 3' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 4' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 5' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 6' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 7' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 8' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 9' },
-//  { hora: '23:38:00', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 10' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 11' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 12' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 13' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 14' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 15' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 16' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 17' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 18' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 19' },
-//  { hora: '23:38:10', id_sorteo: 46, name_sorteo: 'LA PRIMERA PM 20' },
-//];
