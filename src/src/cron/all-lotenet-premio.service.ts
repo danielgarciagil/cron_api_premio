@@ -95,7 +95,6 @@ export class AllLotenetPremioService {
   async generarPremioAutomaticoLotenet(
     id_lotenet_premio: number,
   ): Promise<void> {
-    console.log(id_lotenet_premio);
     const query = `mutation GenerarPremioAutomaticoLotenet($buscarByLotenetPremio: BuscarByLotenerPremioInput!) {
       generarPremioAutomaticoLotenet(buscarByLotenetPremio: $buscarByLotenetPremio) {
         message
@@ -106,9 +105,6 @@ export class AllLotenetPremioService {
         id_lotenet_premio: id_lotenet_premio,
       },
     };
-    console.log(query);
-    console.log(variables);
-
     this.logger.verbose(
       `HACIENDO PETICION A LA API GenerarPremioAutomaticoLotenet => ID => ${id_lotenet_premio}`,
     );
