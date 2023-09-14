@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 
-async function borrarCache(): Promise<void> {
+export async function borrarCache(): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     //todo colocar que solo me borre la carperta de google como tal
     //exec('sudo rm -rf /tmp/.com.google.Chrom*', (error, stdout, stderr) => {
