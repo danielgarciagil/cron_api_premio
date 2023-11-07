@@ -4,7 +4,7 @@ FROM node:20-alpine as build
 
 # Instala tzdata utilizando apk (el gestor de paquetes de Alpine)
 RUN apk update && apk add tzdata
-ENV TZ="America/New_York"
+ENV TZ="America/Puerto_Rico"
 #Crear la carperta
 WORKDIR /app
 
@@ -21,7 +21,7 @@ FROM node:20-alpine
 
 #Url de la api
 ENV URL_API=""
-ENV TZ="America/New_York"
+ENV TZ="America/Puerto_Rico"
 
 COPY --from=build /app /app
 
